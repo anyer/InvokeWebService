@@ -3,3 +3,8 @@ F:\Workspace\DotNet\WebServices\DynamicInvokeService\bin\Release\DynamicInvokeSe
 F:\Workspace\DotNet\WebServices\DynamicInvokeService\obj\Release\DynamicInvokeService.csprojResolveAssemblyReference.cache
 F:\Workspace\DotNet\WebServices\DynamicInvokeService\obj\Release\DynamicInvokeService.exe
 F:\Workspace\DotNet\WebServices\DynamicInvokeService\obj\Release\DynamicInvokeService.pdb
+E:\workspace\DotNet\WebServices\DynamicInvokeService\obj\Release\DynamicInvokeService.exe
+E:\workspace\DotNet\WebServices\DynamicInvokeService\obj\Release\DynamicInvokeService.pdb
+E:\workspace\DotNet\WebServices\DynamicInvokeService\bin\Release\DynamicInvokeService.exe
+E:\workspace\DotNet\WebServices\DynamicInvokeService\bin\Release\DynamicInvokeService.pdb
+E:\workspace\DotNet\WebServices\DynamicInvokeService\obj\Release\DynamicInvokeService.csprojResolveAssemblyReference.cache

@@ -9,48 +9,75 @@ using System.CodeDom;
 using Microsoft.CSharp;
 using System.CodeDom.Compiler;
 using System.Reflection;
+using System.Configuration;
 
 namespace DynamicInvoke
 {
     /// <summary>
-    /// Web Service服务类
+    /// WebService操作类 
     /// </summary>
     public class WSHelper
     {
-        /// < summary> 
-        /// 动态调用web服务 （不含有SoapHeader）
-        /// < /summary> 
-        /// < param name="url">WSDL服务地址< /param> 
-        /// < param name="methodname">方法名< /param> 
-        /// < param name="args">参数< /param> 
-        /// < returns>< /returns> 
-        public static object InvokeWebService(string url, string methodname, object[] args)
-        {
-            return WSHelper.InvokeWebService(url, null, methodname, null, args);
-        }
         /// <summary>
-        /// 动态调用web服务（含有SoapHeader）
+        /// 最终封装调用WebService方法 
+        /// 方法中通过InitSoapHeader()方法给定SoapHeader
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="methodname"></param>
-        /// <param name="soapHeader"></param>
-        /// <param name="args"></param>
+        /// <param name="methodname">方法名称</param>
+        /// <param name="args">方法参数</param>
         /// <returns></returns>
-        public static object InvokeWebService(string url, string methodname, SoapHeader soapHeader, object[] args)
+        public static object InvokeWebService(string methodname, object[] args)
         {
-            return WSHelper.InvokeWebService(url, null, methodname, soapHeader, args);
+            return InvokeWebService(null, null, methodname, InitSoapHeader(), args);
         }
-        /// < summary> 
-        /// 动态调用web服务 
-        /// < /summary> 
-        /// < param name="url">WSDL服务地址< /param> 
-        /// < param name="classname">类名< /param> 
-        /// < param name="methodname">方法名< /param> 
-        /// < param name="args">参数< /param> 
-        /// < returns>< /returns> 
+
+        /// <summary>
+        /// 调用Webservice方法，不含SoapHeader验证
+        /// </summary>
+        /// <param name="url">WSDL服务地址</param>
+        /// <param name="methodname">方法名称</param>
+        /// <param name="args">方法参数</param>
+        /// <returns></returns>
+        //public static object InvokeWebService(string url, string methodname, object[] args)
+        //{
+        //    return InvokeWebService(url, null, methodname, null, args);
+        //}
+
+        /// <summary>
+        /// 调用Webservice方法，含SoapHeader
+        /// </summary>
+        /// <param name="url">WSDL服务地址</param>
+        /// <param name="methodname">方法名称</param>
+        /// <param name="args">方法参数</param>
+        /// <returns></returns>
+        //public static object InvokeWebService(string url, string methodname, SoapHeader soapheader, object[] args)
+        //{
+        //    return InvokeWebService(url, null, methodname, soapheader, args);
+        //}
+
+        /// <summary>
+        /// 调用WebService方法
+        /// </summary>
+        /// <param name="url">WSDL服务地址</param>
+        /// <param name="classname">类名</param>
+        /// <param name="methodname">方法名称</param>
+        /// <param name="soapHeader">soap头信息</param>
+        /// <param name="args">方法参数</param>
+        /// <returns></returns>
         public static object InvokeWebService(string url, string classname, string methodname, SoapHeader soapHeader, object[] args)
         {
             string @namespace = "EnterpriseServerBase.WebService.DynamicWebCalling";
+
+            if (null == url)
+            {
+                if (null == WSHelper.GetServiceUrl())
+                {
+                    return "检查App.config配置文件中是否配置了WebService的URL";
+                }
+                else
+                {
+                    url = WSHelper.GetServiceUrl();
+                }
+            }
             if ((classname == null) || (classname == ""))
             {
                 classname = WSHelper.GetWsClassName(url);
@@ -86,18 +113,18 @@ namespace DynamicInvoke
                 {
                     System.Text.StringBuilder sb = new System.Text.StringBuilder();
                     foreach (System.CodeDom.Compiler.CompilerError ce in cr.Errors)
-                    {http://localhost:38076/Properties/
+                    {
                         sb.Append(ce.ToString());
                         sb.Append(System.Environment.NewLine);
                     }
                     throw new Exception(sb.ToString());
                 }
-                
+
                 //保存生产的代理类，默认是保存在bin目录下面  
                 TextWriter writer = File.CreateText("MyWebServices.cs");
                 icc.GenerateCodeFromCompileUnit(ccu, writer, null);
                 writer.Flush();
-                writer.Close(); 
+                writer.Close();
 
                 //生成代理实例 
                 System.Reflection.Assembly assembly = cr.CompiledAssembly;
@@ -118,7 +145,7 @@ namespace DynamicInvoke
                     foreach (KeyValuePair<string, object> property in soapHeader.Properties)
                     {
                         typeClient.GetField(property.Key).SetValue(clientkey, property.Value);
-                        // typeClient.GetProperty(property.Key).SetValue(clientkey, property.Value, null);  
+                        //typeClient.GetProperty(property.Key).SetValue(clientkey, property.Value, null);  
                     }
                 }
                 #endregion
@@ -146,6 +173,90 @@ namespace DynamicInvoke
                 throw new Exception(ex.InnerException.Message, new Exception(ex.InnerException.StackTrace));
             }
         }
+
+        /// <summary>
+        /// 通过判断是否带有SoapHeader验证，初始化SoapHeader
+        /// </summary>
+        /// <returns></returns>
+        private static SoapHeader InitSoapHeader()
+        {
+            SoapHeader soapHeader = null;
+            if (IsSoapHeaderInvoke())
+            { //带有SoapHeader验证调用时，传SoapHeader的username和password值
+                Dictionary<string, object> properties = new Dictionary<string, object>();
+                properties.Add("UserName", GetSHUserName());
+                properties.Add("PassWord", GetSHPassWord());
+                soapHeader = new SoapHeader("MySoapHeader", properties);
+            }
+
+            return soapHeader;
+        }
+
+        #region 读取App.config 获取url、userName、passWord
+        /// <summary>
+        /// 读取App.config文件中的url
+        /// </summary>
+        /// <returns></returns>
+        private static string GetServiceUrl()
+        {
+            return ConfigurationManager.AppSettings["URL"];
+        }
+
+        /// <summary>
+        /// 读取App.config文件中的userName
+        /// </summary>
+        /// <returns></returns>
+        private static string GetSHUserName()
+        {
+            return ConfigurationManager.AppSettings["UserName"];
+        }
+
+        /// <summary>
+        /// 读取App.config文件中的passWord
+        /// </summary>
+        /// <returns></returns>
+        private static string GetSHPassWord()
+        {
+            return ConfigurationManager.AppSettings["PassWord"];
+        }
+
+        /// <summary>
+        /// 读取App.config文件，获取URL、UserName、PassWord
+        /// </summary>
+        /// <returns></returns>
+        private static String[] ReadAppConfig()
+        {
+
+            String[] configValue = new String[3];
+            String url = ConfigurationManager.AppSettings["URL"];
+            String userName = ConfigurationManager.AppSettings["UserName"];
+            String passWord = ConfigurationManager.AppSettings["PassWord"];
+
+            configValue[0] = url;
+            configValue[1] = userName;
+            configValue[2] = passWord;
+
+            return configValue;
+        }
+        #endregion
+
+
+        /// <summary>
+        /// 通过验证App.config中是否配置UserName及PassWord来判断是否SoapHeader请求
+        /// 返回true表示带有SoapHeader验证，返回false表示不带有SoapHeader验证
+        /// </summary>
+        /// <returns></returns>        
+        private static Boolean IsSoapHeaderInvoke()
+        {
+            //获取值中有空，返回false，表示不带SoapHeader验证调用
+            return (null == GetSHUserName() || null == GetSHPassWord()) ? false : true;
+        }
+
+        /// <summary>
+        /// 通过WSDL服务地址获取类名
+        /// </summary>
+        /// <param name="wsUrl">WSDL服务地址</param>
+        /// <returns></returns>
         private static string GetWsClassName(string wsUrl)
         {
             string[] parts = wsUrl.Split('/');
@@ -153,6 +264,9 @@ namespace DynamicInvoke
             return pps[0];
         }
 
+
+
+        #region 构建SOAP头，用于SoapHeader的验证
         /// <summary>  
         /// 构建SOAP头，用于SoapHeader验证  
         /// </summary>  
@@ -205,6 +319,7 @@ namespace DynamicInvoke
                 }
                 Properties.Add(name, value);
             }
-        }  
+        }
+        #endregion
     }
 }
