@@ -1,0 +1,6 @@
+E:\workspace\DotNet\WebServices\WebServices\bin\WebServices.dll.config
+E:\workspace\DotNet\WebServices\WebServices\bin\WebServices.dll
+E:\workspace\DotNet\WebServices\WebServices\bin\WebServices.pdb
+E:\workspace\DotNet\WebServices\WebServices\obj\Debug\WebServices.csprojResolveAssemblyReference.cache
+E:\workspace\DotNet\WebServices\WebServices\obj\Debug\WebServices.dll
+E:\workspace\DotNet\WebServices\WebServices\obj\Debug\WebServices.pdb

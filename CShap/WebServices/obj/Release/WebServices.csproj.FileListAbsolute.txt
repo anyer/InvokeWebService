@@ -1,0 +1,12 @@
+E:\workspace\DotNet\WebServices\WebServices\bin\WebServices.dll.config
+E:\workspace\DotNet\WebServices\WebServices\bin\WebServices.dll
+E:\workspace\DotNet\WebServices\WebServices\bin\WebServices.pdb
+E:\workspace\DotNet\WebServices\WebServices\obj\Release\WebServices.csprojResolveAssemblyReference.cache
+E:\workspace\DotNet\WebServices\WebServices\obj\Release\WebServices.dll
+E:\workspace\DotNet\WebServices\WebServices\obj\Release\WebServices.pdb
+F:\Workspace\DotNet\WebServices\WebServices\bin\WebServices.dll.config
+F:\Workspace\DotNet\WebServices\WebServices\bin\WebServices.dll
+F:\Workspace\DotNet\WebServices\WebServices\bin\WebServices.pdb
+F:\Workspace\DotNet\WebServices\WebServices\obj\Release\WebServices.csprojResolveAssemblyReference.cache
+F:\Workspace\DotNet\WebServices\WebServices\obj\Release\WebServices.dll
+F:\Workspace\DotNet\WebServices\WebServices\obj\Release\WebServices.pdb

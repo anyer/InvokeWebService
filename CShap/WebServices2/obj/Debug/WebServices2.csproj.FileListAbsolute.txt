@@ -1,0 +1,5 @@
+F:\Workspace\DotNet\WebServices\WebServices2\bin\WebServices2.dll.config
+F:\Workspace\DotNet\WebServices\WebServices2\bin\WebServices2.dll
+F:\Workspace\DotNet\WebServices\WebServices2\bin\WebServices2.pdb
+F:\Workspace\DotNet\WebServices\WebServices2\obj\Debug\WebServices2.dll
+F:\Workspace\DotNet\WebServices\WebServices2\obj\Debug\WebServices2.pdb
